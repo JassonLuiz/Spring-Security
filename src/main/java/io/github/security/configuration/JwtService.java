@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.util.function.Function;
 
 @Service
 public class JwtService {
@@ -18,7 +19,12 @@ public class JwtService {
     private String SECRET_KEY;
 
     public String extractUsername(String token) {
-        return null;
+        return extractClaims(token, Claims::getSubject);
+    }
+
+    public <T> T extractClaims(String token, Function<Claims, T> claimsResolver){
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
     }
 
     private Claims extractAllClaims(String token){
